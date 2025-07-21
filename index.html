@@ -1,436 +1,155 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kişisel Portföyüm</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
-    <style>
-        /* CSS Kodları */
-        body {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f7f6; /* Açık gri arka plan */
-            color: #333;
-            line-height: 1.6;
-            /* Hafif desenli arka plan */
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 80 80"><g fill="%23e8eceb" fill-opacity="0.5"><path fill-rule="evenodd" d="M0 0h40v40H0V0zm40 40h40v40H40V40z"/></g></svg>'); 
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
-            margin-bottom: 20px;
-        }
-
-        header h1 {
-            font-size: 2.2em;
-            font-weight: 700;
-            color: #2c3e50;
-            margin: 0;
-        }
-
-        .total-value {
-            text-align: right;
-        }
-
-        .total-value span {
-            display: block;
-            font-size: 0.9em;
-            color: #666;
-            margin-bottom: 5px;
-        }
-
-        .total-value h2 {
-            font-size: 2em;
-            font-weight: 700;
-            color: #28a745; /* Yeşil renk */
-            margin: 0;
-        }
-
-        .asset-tabs {
-            display: flex;
-            flex-wrap: wrap; /* Küçük ekranlarda sarması için */
-            gap: 10px;
-            margin-bottom: 25px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 15px;
-        }
-
-        .tab-button {
-            background-color: #e9ecef;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.95em;
-            font-weight: 600;
-            color: #555;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .tab-button:hover {
-            background-color: #dee2e6;
-        }
-
-        .tab-button.active {
-            background-color: #007bff; /* Mavi aktif buton */
-            color: white;
-            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
-        }
-
-        .asset-section {
-            display: none; /* Varsayılan olarak gizli */
-        }
-
-        .asset-section.active {
-            display: block; /* Aktif olanı göster */
-        }
-
-        .portfolio-overview {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
-        }
-
-        .portfolio-overview h3 {
-            margin-top: 0;
-            color: #444;
-        }
-
-        .chart-container {
-            margin-top: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 220px; /* Placeholder görseli için */
-        }
-
-        .chart-container img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 50%; /* Pasta grafik şeklini vermek için */
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
-        }
-
-        h3 {
-            font-size: 1.6em;
-            font-weight: 600;
-            color: #333;
-            margin-top: 30px;
-            margin-bottom: 15px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            overflow: hidden; /* Kenar yuvarlaklığı için */
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
-        }
-
-        table th, table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        table th {
-            background-color: #f2f2f2;
-            font-weight: 600;
-            color: #555;
-            text-transform: uppercase;
-            font-size: 0.85em;
-        }
-
-        table tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        table tbody tr:hover {
-            background-color: #fcfcfc;
-        }
-
-        .profit {
-            color: #28a745; /* Yeşil */
-            font-weight: 600;
-        }
-
-        .loss {
-            color: #dc3545; /* Kırmızı */
-            font-weight: 600;
-        }
-
-        /* Responsive Tasarım */
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .total-value {
-                text-align: left;
-                margin-top: 15px;
-            }
-
-            .asset-tabs {
-                flex-direction: column;
-                gap: 8px;
-            }
-
-            .tab-button {
-                width: 100%;
-                text-align: center;
-                padding: 12px 10px;
-            }
-
-            table, thead, tbody, th, td, tr {
-                display: block;
-            }
-
-            table thead {
-                display: none; /* Başlıkları mobil görünümde gizle */
-            }
-
-            table tr {
-                margin-bottom: 10px;
-                border: 1px solid #e0e0e0;
-                border-radius: 8px;
-                padding: 10px;
-                box-shadow: 0 1px 5px rgba(0, 0, 0, 0.02);
-            }
-
-            table td {
-                border: none;
-                position: relative;
-                padding-left: 50%; /* Başlık için boşluk */
-                text-align: right;
-            }
-
-            table td::before {
-                /* data-label özelliğini kullanarak mobil görünümde başlıkları göster */
-                content: attr(data-label); 
-                position: absolute;
-                left: 10px;
-                width: 45%;
-                padding-right: 10px;
-                white-space: nowrap;
-                text-align: left;
-                font-weight: 600;
-                color: #666;
-            }
-        }
-
-        /* Küçük mobil cihazlar için ekstra iyileştirmeler */
-        @media (max-width: 480px) {
-            .container {
-                margin: 10px;
-                padding: 15px;
-            }
-
-            header h1 {
-                font-size: 1.8em;
-            }
-
-            .total-value h2 {
-                font-size: 1.6em;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio Tracker</title>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.22.5/Babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Portföyüm</h1>
-            <div class="total-value">
-                <span>Toplam Portföy Değeri</span>
-                <h2>₺ 1,250,500.25</h2>
+  <div id="root"></div>
+  <script type="text/babel">
+    function App() {
+      const [assets, setAssets] = React.useState([]);
+      const [isModalOpen, setIsModalOpen] = React.useState(false);
+      const [newAsset, setNewAsset] = React.useState({
+        type: 'bist',
+        name: '',
+        quantity: '',
+        price: ''
+      });
+
+      const assetTypes = [
+        'BIST Stock', 'US Stock', 'ETF', 'Cryptocurrency', 'TL', 'BES',
+        'Foreign Currency', 'Gold', 'Silver'
+      ];
+
+      const handleAddAsset = () => {
+        if (newAsset.name && newAsset.quantity && newAsset.price) {
+          setAssets([...assets, { ...newAsset, id: Date.now() }]);
+          setNewAsset({ type: 'bist', name: '', quantity: '', price: '' });
+          setIsModalOpen(false);
+        }
+      };
+
+      return (
+        <div className="flex min-h-screen bg-gray-100">
+          {/* Sidebar */}
+          <div className="w-64 bg-blue-800 text-white p-6 hidden md:block">
+            <h2 className="text-2xl font-bold mb-6">Portfolio Tracker</h2>
+            <nav>
+              <ul>
+                <li className="mb-4"><a href="#" className="hover:text-blue-300">Dashboard</a></li>
+                <li className="mb-4"><a href="#" className="hover:text-blue-300">Assets</a></li>
+                <li className="mb-4"><a href="#" className="hover:text-blue-300">Reports</a></li>
+                <li><a href="#" className="hover:text-blue-300">Settings</a></li>
+              </ul>
+            </nav>
+          </div>
+
+          {/* Main Content */}
+          <div className="flex-1 p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              >
+                Add Asset
+              </button>
             </div>
-        </header>
 
-        <nav class="asset-tabs">
-            <button class="tab-button active" data-asset="all">Tüm Varlıklar</button>
-            <button class="tab-button" data-asset="bist">BIST Hisse Senetleri</button>
-            <button class="tab-button" data-asset="us_stocks">ABD Hisse/ETF</button>
-            <button class="tab-button" data-asset="crypto">Kripto Paralar</button>
-            <button class="tab-button" data-asset="precious_metals">Altın & Gümüş</button>
-            <button class="tab-button" data-asset="bes">BES</button>
-            <button class="tab-button" data-asset="forex">Döviz</button>
-            <button class="tab-button" data-asset="tl">TL Nakit</button>
-        </nav>
+            {/* Asset List */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {assets.length === 0 ? (
+                <p className="text-gray-600">No assets added yet.</p>
+              ) : (
+                assets.map(asset => (
+                  <div key={asset.id} className="bg-white p-4 rounded-lg shadow">
+                    <h3 className="text-lg font-semibold">{asset.name}</h3>
+                    <p className="text-gray-600">Type: {asset.type}</p>
+                    <p className="text-gray-600">Quantity: {asset.quantity}</p>
+                    <p className="text-gray-600">Price: {asset.price} TRY</p>
+                  </div>
+                ))
+              )}
+            </div>
 
-        <main>
-            <section id="all" class="asset-section active">
-                <div class="portfolio-overview">
-                    <h3>Portföy Dağılımı</h3>
-                    <div class="chart-container">
-                        <img src="https://via.placeholder.com/200x200?text=Pasta+Grafik" alt="Portföy Dağılım Grafiği">
-                    </div>
+            {/* Modal for Adding Asset */}
+            {isModalOpen && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                <div className="bg-white p-6 rounded-lg w-full max-w-md">
+                  <h2 className="text-2xl font-bold mb-4">Add New Asset</h2>
+                  <div className="mb-4">
+                    <label className="block text-gray-700 mb-2">Asset Type</label>
+                    <select
+                      className="w-full p-2 border rounded"
+                      value={newAsset.type}
+                      onChange={(e) => setNewAsset({ ...newAsset, type: e.target.value })}
+                    >
+                      {assetTypes.map(type => (
+                        <option key={type} value={type.toLowerCase().replace(' ', '')}>
+                          {type}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-gray-700 mb-2">Asset Name</label>
+                    <input
+                      type="text"
+                      className="w-full p-2 border rounded"
+                      value={newAsset.name}
+                      onChange={(e) => setNewAsset({ ...newAsset, name: e.target.value })}
+                      placeholder="e.g., THYAO, AAPL, Bitcoin"
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-gray-700 mb-2">Quantity</label>
+                    <input
+                      type="number"
+                      className="w-full p-2 border rounded"
+                      value={newAsset.quantity}
+                      onChange={(e) => setNewAsset({ ...newAsset, quantity: e.target.value })}
+                      placeholder="e.g., 100"
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-gray-700 mb-2">Price (TRY)</label>
+                    <input
+                      type="number"
+                      className="w-full p-2 border rounded"
+                      value={newAsset.price}
+                      onChange={(e) => setNewAsset({ ...newAsset, price: e.target.value })}
+                      placeholder="e.g., 150.75"
+                    />
+                  </div>
+                  <div className="flex justify-end">
+                    <button
+                      onClick={() => setIsModalOpen(false)}
+                      className="mr-4 text-gray-600 hover:text-gray-800"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleAddAsset}
+                      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                    >
+                      Add
+                    </button>
+                  </div>
                 </div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
 
-                <h3>Tüm Varlıklar Listesi</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Varlık</th>
-                            <th>Miktar</th>
-                            <th>Güncel Fiyat</th>
-                            <th>Toplam Değer</th>
-                            <th>Kar/Zarar</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td data-label="Varlık">ASELS (BIST)</td>
-                            <td data-label="Miktar">1,500 Adet</td>
-                            <td data-label="Güncel Fiyat">₺ 62.50</td>
-                            <td data-label="Toplam Değer">₺ 93,750.00</td>
-                            <td data-label="Kar/Zarar" class="profit">+₺ 12,500.00 (+15%)</td>
-                        </tr>
-                        <tr>
-                            <td data-label="Varlık">TSLA (ABD)</td>
-                            <td data-label="Miktar">5 Adet</td>
-                            <td data-label="Güncel Fiyat">$ 250.00</td>
-                            <td data-label="Toplam Değer">$ 1,250.00 (₺ 37,500.00)</td>
-                            <td data-label="Kar/Zarar" class="loss">-₺ 5,000.00 (-11%)</td>
-                        </tr>
-                        <tr>
-                            <td data-label="Varlık">BTC (Kripto)</td>
-                            <td data-label="Miktar">0.5 BTC</td>
-                            <td data-label="Güncel Fiyat">$ 68,000.00</td>
-                            <td data-label="Toplam Değer">$ 34,000.00 (₺ 1,020,000.00)</td>
-                            <td data-label="Kar/Zarar" class="profit">+₺ 200,000.00 (+24%)</td>
-                        </tr>
-                        <tr>
-                            <td data-label="Varlık">Gram Altın (XAU/TRY)</td>
-                            <td data-label="Miktar">100 Gram</td>
-                            <td data-label="Güncel Fiyat">₺ 2,450.00</td>
-                            <td data-label="Toplam Değer">₺ 245,000.00</td>
-                            <td data-label="Kar/Zarar" class="profit">+₺ 15,000.00 (+6.5%)</td>
-                        </tr>
-                        <tr>
-                            <td data-label="Varlık">EUR (Döviz)</td>
-                            <td data-label="Miktar">1,000 EUR</td>
-                            <td data-label="Güncel Fiyat">₺ 32.50</td>
-                            <td data-label="Toplam Değer">₺ 32,500.00</td>
-                            <td data-label="Kar/Zarar" class="profit">+₺ 1,500.00 (+5%)</td>
-                        </tr>
-                        </tbody>
-                </table>
-            </section>
-
-            <section id="bist" class="asset-section">
-                <h3>BIST Hisse Senetleri Listesi</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Hisse</th>
-                            <th>Miktar</th>
-                            <th>Güncel Fiyat</th>
-                            <th>Toplam Değer</th>
-                            <th>Kar/Zarar</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td data-label="Hisse">THYAO</td>
-                            <td data-label="Miktar">2,000 Adet</td>
-                            <td data-label="Güncel Fiyat">₺ 280.00</td>
-                            <td data-label="Toplam Değer">₺ 560,000.00</td>
-                            <td data-label="Kar/Zarar" class="profit">+₺ 50,000.00 (+9.8%)</td>
-                        </tr>
-                        <tr>
-                            <td data-label="Hisse">EREGL</td>
-                            <td data-label="Miktar">3,000 Adet</td>
-                            <td data-label="Güncel Fiyat">₺ 45.00</td>
-                            <td data-label="Toplam Değer">₺ 135,000.00</td>
-                            <td data-label="Kar/Zarar" class="loss">-₺ 10,000.00 (-6.9%)</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
-
-            <section id="us_stocks" class="asset-section">
-                <h3>ABD Hisse ve ETF Listesi</h3>
-                <p>ABD hisse ve ETF verileri burada gösterilecek...</p>
-            </section>
-            <section id="crypto" class="asset-section">
-                <h3>Kripto Para Listesi</h3>
-                <p>Kripto para verileri burada gösterilecek...</p>
-            </section>
-            <section id="precious_metals" class="asset-section">
-                <h3>Altın ve Gümüş Listesi</h3>
-                <p>Altın ve gümüş verileri burada gösterilecek...</p>
-            </section>
-            <section id="bes" class="asset-section">
-                <h3>BES Fonları Listesi</h3>
-                <p>BES fonları verileri burada gösterilecek...</p>
-            </section>
-            <section id="forex" class="asset-section">
-                <h3>Döviz Listesi</h3>
-                <p>Döviz varlıkları burada gösterilecek...</p>
-            </section>
-            <section id="tl" class="asset-section">
-                <h3>TL Nakit Varlıklar</h3>
-                <p>TL nakit varlıklar burada gösterilecek...</p>
-            </section>
-        </main>
-    </div>
-
-    <script>
-        // JavaScript Kodları
-        document.addEventListener('DOMContentLoaded', () => {
-            const tabButtons = document.querySelectorAll('.tab-button');
-            const assetSections = document.querySelectorAll('.asset-section');
-
-            tabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    // Tüm butonlardan 'active' sınıfını kaldır
-                    tabButtons.forEach(btn => btn.classList.remove('active'));
-                    // Tıklanan butona 'active' sınıfını ekle
-                    button.classList.add('active');
-
-                    // Tüm bölümleri gizle
-                    assetSections.forEach(section => section.classList.remove('active'));
-
-                    // Tıklanan butonun data-asset değeriyle eşleşen bölümü göster
-                    const targetAsset = button.dataset.asset;
-                    document.getElementById(targetAsset).classList.add('active');
-                });
-            });
-
-            // Mobil görünümde tablo hücrelerine başlıkları eklemek için (data-label)
-            // Bu kısım sadece mobil görünümde tablo verilerinin daha okunur olmasını sağlar.
-            if (window.innerWidth <= 768) {
-                document.querySelectorAll('table thead th').forEach((th, index) => {
-                    const label = th.textContent;
-                    document.querySelectorAll(`table tbody tr`).forEach(tr => {
-                        if (tr.children[index]) {
-                            tr.children[index].setAttribute('data-label', label);
-                        }
-                    });
-                });
-            }
-        });
-    </script>
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
 </body>
 </html>
